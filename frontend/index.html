@@ -1,0 +1,91 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Pack My Cake</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom">
+  <div class="container">
+    <a class="navbar-brand fw-bold" href="/">Pack My Cake</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav"><span class="navbar-toggler-icon"></span></button>
+    <div class="collapse navbar-collapse" id="nav">
+      <ul class="navbar-nav ms-auto align-items-center">
+        <li class="nav-item me-2"><a class="nav-link" href="/products.html">Products</a></li>
+        <li class="nav-item me-2"><a class="nav-link" href="/cart.html">Cart <span id="cartCount" class="badge bg-danger ms-1">0</span></a></li>
+        <li class="nav-item me-2"><a class="nav-link" href="/login.html">Login</a></li>
+        <li class="nav-item"><a class="nav-link" href="/admin.html">Admin</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<header class="py-5 text-center bg-light">
+  <div class="container">
+    <h1 class="display-6">Pack My Cake</h1>
+    <p class="lead">High-quality cake boxes for home bakers in Tamil Nadu — HSN: 4819 • GST: 18% (CGST 9% + SGST 9%)</p>
+    <a class="btn btn-primary" href="/products.html">Browse Products</a>
+  </div>
+</header>
+
+<main class="container my-4">
+  <h3>Featured Products</h3>
+  <div id="featured" class="row gy-3"></div>
+</main>
+
+<footer class="text-center py-3 border-top">
+  <small>&copy; Pack My Cake • GSTIN: 33ALOPM8700C1ZA</small>
+</footer>
+
+<script src="/js/app.js"></script>
+<script>
+(async function(){
+  await loadFeatured();
+  updateCartCount();
+})();
+async function loadFeatured(){
+  const res = await fetch('/api/products');
+  const data = await res.json();
+  const featured = document.getElementById('featured');
+  featured.innerHTML = data.slice(0,4).map(p=>`
+    <div class="col-sm-6 col-md-3">
+      <div class="card h-100">
+        <img src="${p.image||'/images/placeholder.png'}" class="card-img-top" style="height:160px;object-fit:contain">
+        <div class="card-body d-flex flex-column">
+          <h6 class="card-title">${p.title}</h6>
+          <p class="small text-muted mb-1">${p.category} • MOQ: ${p.moq}</p>
+          <div class="mt-auto d-flex justify-content-between align-items-center">
+            <strong>₹${Number(p.price).toFixed(2)}</strong>
+            <button class="btn btn-sm btn-primary" onclick="addToCartFromUI(${p.id})">Add</button>
+          </div>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+async function addToCartFromUI(id){
+  const res = await fetch('/api/products/'+id);
+  const p = await res.json();
+  const qty = p.moq || 1;
+  addToCart({ id: p.id, title: p.title, price: p.price, moq: p.moq }, qty);
+  showToast('Added to cart');
+  updateCartCount();
+}
+
+function showToast(msg){
+  const t = document.createElement('div');
+  t.className = 'toast align-items-center text-white bg-dark border-0 position-fixed';
+  t.style.right = '20px'; t.style.bottom = '20px'; t.innerHTML = `<div class="d-flex"><div class="toast-body">${msg}</div><button class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button></div>`;
+  document.body.appendChild(t);
+  const bs = new bootstrap.Toast(t,{delay:2000}); bs.show();
+  t.addEventListener('hidden.bs.toast', ()=> t.remove());
+}
+
+function updateCartCount(){ const c = getCart(); document.getElementById('cartCount').innerText = c.reduce((s,i)=>s+i.qty,0); }
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

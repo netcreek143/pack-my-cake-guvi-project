@@ -1,0 +1,5 @@
+body{font-family:Inter,system-ui,Arial,sans-serif;background:#fff;color:#222}
+.navbar-brand{letter-spacing:0.2px}
+header h1{font-weight:600}
+.card{border-radius:10px}
+.toast{z-index:9999}

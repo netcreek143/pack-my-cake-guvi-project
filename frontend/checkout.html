@@ -1,0 +1,22 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Checkout - Pack My Cake</title><link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"><link rel="stylesheet" href="/css/style.css"></head><body>
+<nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom"><div class="container"><a class="navbar-brand fw-bold" href="/">Pack My Cake</a></div></nav>
+<main class="container my-4">
+  <h3>Checkout</h3>
+  <div id="alert" class="alert alert-warning d-none"></div>
+  <form id="checkoutForm">
+    <div class="mb-3"><label>Name</label><input id="name" class="form-control" required></div>
+    <div class="mb-3"><label>Email</label><input id="email" class="form-control" type="email" required></div>
+    <div class="mb-3"><label>Shipping Address</label><textarea id="address" class="form-control" required></textarea></div>
+    <div class="mb-3"><h5>Cart Summary</h5><div id="summary"></div></div>
+    <button class="btn btn-primary">Place Order</button>
+  </form>
+</main>
+<script src="/js/app.js"></script>
+<script>
+(function(){ const cart = getCart(); if (!cart.length) { document.getElementById('summary').innerHTML='<p>Cart empty.</p>'; return; } const problems = cart.filter(i=>i.qty < (i.moq||1)); if (problems.length){ document.getElementById('alert').classList.remove('d-none'); document.getElementById('alert').innerText='Some items do not meet MOQ. Please update cart.'; } let subtotal=0; document.getElementById('summary').innerHTML = '<ul>' + cart.map(i=>{ subtotal += i.qty*i.price; return `<li>${i.title} — ${i.qty} x ₹${i.price.toFixed(2)} = ₹${(i.qty*i.price).toFixed(2)}</li>` }).join('') + '</ul>'; const cgst = +(subtotal*0.09).toFixed(2); const sgst = +(subtotal*0.09).toFixed(2); document.getElementById('summary').innerHTML += `<p>Subtotal: ₹${subtotal.toFixed(2)}<br/>CGST(9%): ₹${cgst.toFixed(2)}<br/>SGST(9%): ₹${sgst.toFixed(2)}<br/><strong>Total: ₹${(subtotal+cgst+sgst).toFixed(2)}</strong></p>`;
+
+document.getElementById('checkoutForm').addEventListener('submit', async (e)=>{ e.preventDefault(); const auth = getAuth(); if (!auth.token){ alert('Please login to place order.'); location.href='/login.html'; return; } try{ const payload = { customer_name: document.getElementById('name').value, customer_email: document.getElementById('email').value, shipping_address: document.getElementById('address').value, items: cart, subtotal }; const res = await fetch('/api/orders', { method:'POST', headers: { 'Content-Type':'application/json', 'Authorization':'Bearer '+auth.token }, body: JSON.stringify(payload) }); const data = await res.json(); if (!res.ok) throw data; alert('Order placed. ID: '+data.id+' Total: ₹'+data.total); localStorage.removeItem('pmc_cart'); location.href='/'; }catch(err){ alert('Order failed: ' + (err.error||JSON.stringify(err))); } });
+
+})();
+</script>
+</body></html>

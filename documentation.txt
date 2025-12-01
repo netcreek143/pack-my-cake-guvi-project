@@ -1,0 +1,71 @@
+Pack My Cake Project Documentation
+Project Overview
+Pack My Cake is a full-stack e-commerce platform designed to provide home bakers and small bakeries in Tamil Nadu with an easy-to-use online marketplace for premium cake boxes and bakery packaging products. The platform offers product catalog browsing, filtering, a shopping cart with real-time Minimum Order Quantity (MOQ) checks, GST-inclusive pricing, secure user authentication, and an admin panel for managing products and orders.
+
+Technologies Used
+Frontend
+HTML5, CSS3, JavaScript: Core web technologies for structure, styling, and interactivity.
+
+Bootstrap 5: Utilized for rapid, responsive, and mobile-first UI design.
+
+LocalStorage API: Used for persisting shopping cart state across sessions and pages.
+
+Backend
+Node.js with Express.js: Provides a lightweight, efficient REST API server handling product data, user authentication, cart processing, and order management.
+
+SQLite: Chosen as an embedded, file-based relational database system to easily manage and persist product, user, and order data without complex setup.
+
+Authentication & Security
+bcryptjs: Password hashing for secure user credential storage.
+
+jsonwebtoken (JWT): Token-based authentication for stateless login sessions.
+
+Development & Deployment Tools
+Nodemon: Enables automatic server restarts during development.
+
+Git & GitHub: Version control and collaborative development.
+
+Render.com / Local Node Server: Hosting and deployment platform ensuring the backend is publicly accessible and scalable.
+
+Design Decisions
+Technical Design
+Frontend Framework Choice: Decided on vanilla JavaScript and Bootstrap to ensure simplicity, ease of maintenance, and fast loading times, especially on mobile devices commonly used by home bakers.
+
+RESTful API Structure: Backend APIs are structured following REST principles, with endpoints for products, orders, and authentication to keep loose coupling and facilitate future expansion.
+
+Database Selection: SQLite was chosen to avoid complex external database management for a small-to-medium-scale product catalog and order tracking.
+
+Authentication Strategy: Token-based JWT authentication allows secure session handling without server-side session storage, supporting scalability and compatibility with frontend SPA behavior.
+
+UI/UX Design
+Mobile-first design: Bootstrap enabled responsive, accessible UI for users predominantly using smartphones.
+
+Product-first Layout: Emphasis on clear product details such as dimensions, MOQ, pricing, and stock status to ease ordering decisions.
+
+Consistent Branding: Use of color gradients and badges aligns with the packaging industry standards for a professional and trustworthy feel.
+
+Real-time Feedback: Toast notifications, cart counters, and validation messages provide instantaneous interaction cues, enhancing user confidence during order placement.
+
+Development Challenges and Solutions
+MOQ Validation in Cart
+Challenge: Ensure users cannot add quantities below Minimum Order Quantities for each product.
+Solution: Implemented validation logic in both frontend (JavaScript checks) and backend (order processing), prompting users with clear alerts and preventing erroneous order submissions.
+
+GST and Tax Calculations
+Challenge: Correctly calculate and display GST (18% total split as CGST + SGST) inclusive pricing on order summaries and invoices.
+Solution: Embedded tax calculation logic in backend order creation endpoints and reflected tax breakdowns in frontend cart and checkout summaries to maintain transparency and compliance.
+
+Managing Product Variants and Filters
+Challenge: Building flexible, performant product filtering across categories and search queries in SQLite-backed APIs.
+Solution: Leveraged SQLite’s query capabilities with dynamic SQL based on query parameters for categories and product name search, ensuring scalability and fast response times.
+
+Authenticated User Experience
+Challenge: Provide secure login, session management, and protected admin access while keeping the app lightweight.
+Solution: Used bcryptjs for password hashing, JWT tokens for stateless session handling, and protected admin routes server-side. Frontend checks for authentication state before rendering sensitive admin information.
+
+Seamless Integration of Frontend and Backend
+Challenge: Maintain smooth communication and state synchronization between the frontend single-page flows (like cart persistence) and backend API.
+Solution: Designed frontend to use RESTful endpoints efficiently combined with client-side storage for cart and session data, ensuring users can resume sessions even across page reloads or accidental exits.
+
+Summary
+In building Pack My Cake, the key objective was to deliver a functional, scalable, and clear full-stack application tailored specifically for the needs of Tamil Nadu’s home baker community. By balancing simplicity in technology with rich feature support, the project triangularly optimized developer productivity, user experience, and operational reliability.
